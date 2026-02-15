@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "google-calendar": {
+      "command": "npx",
+      "args": ["mcp-remote", "http://127.0.0.1:3000/mcp", "--transport", "http-only"],
+      "env": { "NO_PROXY": "127.0.0.1,localhost" }
+    }
+  }
+}
