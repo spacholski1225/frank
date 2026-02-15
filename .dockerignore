@@ -1,11 +1,1 @@
-.env
-.git
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.pytest_cache/
-*.log
-README.md
-docs/
-tests/
+# This file is no longer used (Docker removed)

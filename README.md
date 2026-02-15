@@ -4,23 +4,23 @@ Telegram bot that enables mobile access to Claude Code running on Raspberry Pi (
 
 ## Architecture
 
-- **Docker Container**: Runs Python bot (aiogram) that handles Telegram messages
-- **Host System**: Claude Code installed natively, accessed via volume mount
-- **Communication**: Bot executes `claude -p "prompt" --yes` via subprocess
+- **Python Bot**: Runs directly on host using aiogram to handle Telegram messages
+- **Claude Code**: Installed natively on host, executed via subprocess
+- **Communication**: Bot executes `claude -p "prompt"` directly
 
 ## Features
 
 - Single-user authorization (whitelist by Telegram user ID)
 - ANSI code removal for clean mobile output
 - Automatic message splitting for long responses
-- Docker-based deployment with auto-restart
-- Full filesystem access for Claude (reads/writes host files)
+- Direct execution on host (no Docker overhead)
+- Full Claude Code features available
 
 ## Prerequisites
 
 **Host system (RPI or Linux):**
-- Docker + docker-compose
-- Claude Code installed: `claude login`
+- Python 3.11+
+- Claude Code installed and logged in: `claude login`
 
 ## Installation
 
@@ -30,20 +30,22 @@ git clone <repo-url>
 cd claude-rpi-bridge
 ```
 
-2. Configure environment:
+2. Create virtual environment and install dependencies:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+3. Configure environment:
 ```bash
 cp .env.example .env
 # Edit .env with your Telegram bot token and user ID
 ```
 
-3. Build and run:
+4. Run the bot:
 ```bash
-docker-compose up -d
-```
-
-4. Check logs:
-```bash
-docker logs -f claude-bridge
+./run-local.sh
 ```
 
 ## Usage
@@ -58,6 +60,7 @@ Send any text message to your Telegram bot. The bot will:
 
 **Unit tests:**
 ```bash
+source venv/bin/activate
 pytest tests/ -v
 ```
 
@@ -68,48 +71,80 @@ pytest tests/test_integration.py -v -m integration
 
 ## Development
 
-**Local testing without Docker:**
+**Running manually:**
 ```bash
-pip install -r requirements.txt
+source venv/bin/activate
 python main.py
 ```
 
-## Deployment
+## Deployment on RPI
 
-**RPI deployment:**
 1. Transfer code: `git clone` on RPI
-2. Install Docker: `curl -fsSL https://get.docker.com | sh`
-3. Install Claude Code and login
-4. Configure `.env`
-5. Run: `docker-compose up -d`
+2. Install Python 3.11+: `sudo apt install python3 python3-venv python3-pip`
+3. Install Claude Code and login: `claude login`
+4. Set up project:
+```bash
+cd claude-rpi-bridge
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env with your tokens
+```
+
+5. Run manually or set up as systemd service
+
+**Setting up systemd service (auto-start on boot):**
+
+Create `/etc/systemd/system/claude-bridge.service`:
+```ini
+[Unit]
+Description=Claude RPI Telegram Bridge
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USERNAME
+WorkingDirectory=/home/YOUR_USERNAME/claude-rpi-bridge
+ExecStart=/home/YOUR_USERNAME/claude-rpi-bridge/venv/bin/python main.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable claude-bridge
+sudo systemctl start claude-bridge
+```
+
+**Monitoring:**
+```bash
+# View logs
+sudo journalctl -u claude-bridge -f
+
+# Restart service
+sudo systemctl restart claude-bridge
+
+# Check status
+sudo systemctl status claude-bridge
+```
 
 **Updates:**
 ```bash
 git pull
-docker-compose build
-docker-compose up -d
-```
-
-## Monitoring
-
-**Logs:**
-```bash
-docker logs -f claude-bridge
-docker logs --tail 100 claude-bridge
-```
-
-**Restart:**
-```bash
-docker-compose restart
+sudo systemctl restart claude-bridge
 ```
 
 ## Future Enhancements
 
-- MCP server integration (add to `~/.claude/config.json`)
 - Multi-user support
 - Command routing (`/status`, `/help`)
-- Response streaming
 - Approval workflow for destructive commands
+- File upload/download support
 
 ## License
 

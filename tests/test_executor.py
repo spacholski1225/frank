@@ -16,7 +16,7 @@ def test_execute_claude_success(mock_run):
     assert stdout == "Claude response"
     assert stderr == ""
     mock_run.assert_called_once_with(
-        ["claude", "-p", "test prompt", "--yes"],
+        ["claude", "-p", "test prompt"],
         capture_output=True,
         text=True,
         timeout=None
