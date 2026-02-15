@@ -2,16 +2,16 @@
 # Run bot in background
 
 echo "Activating virtual environment..."
-source /home/spacholski/Sources/frank/venv/bin/activate
+source ./venv/bin/activate
 
 echo "Checking .env file..."
-if [ ! -f /home/spacholski/Sources/frank/.env ]; then
+if [ ! -f ./.env ]; then
     echo "ERROR: .env file not found!"
     exit 1
 fi
 
 echo "Starting bot in background..."
-cd /home/spacholski/Sources/frank
+cd ./frank
 
 # Check if bot is already running
 if [ -f bot.pid ]; then
