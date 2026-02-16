@@ -11,13 +11,16 @@ def test_real_claude_execution():
     """
     prompt = "Say 'hello' and nothing else"
 
-    stdout, stderr = execute_claude(prompt)
+    result_text, session_id = execute_claude(prompt)
 
     # Verify we got output
-    assert stdout or stderr
+    assert result_text
+
+    # Verify session ID returned
+    assert session_id
 
     # Clean output
-    clean = remove_ansi_codes(stdout if stdout else stderr)
+    clean = remove_ansi_codes(result_text)
 
     # Verify output is non-empty
     assert len(clean.strip()) > 0

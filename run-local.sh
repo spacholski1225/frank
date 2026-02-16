@@ -5,7 +5,7 @@ echo "Activating virtual environment..."
 source ./venv/bin/activate
 
 echo "Checking .env file..."
-if [ ! -f ./frank/.env ]; then
+if [ ! -f ./.env ]; then
     echo "ERROR: .env file not found!"
     exit 1
 fi

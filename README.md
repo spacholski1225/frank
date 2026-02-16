@@ -11,10 +11,12 @@ Telegram bot that enables mobile access to Claude Code running on Raspberry Pi (
 ## Features
 
 - Single-user authorization (whitelist by Telegram user ID)
+- **Conversation continuity** - maintains conversation history across messages
 - ANSI code removal for clean mobile output
 - Automatic message splitting for long responses
 - Direct execution on host (no Docker overhead)
 - Full Claude Code features available
+- `/new` command to start fresh conversation
 
 ## Prerequisites
 
@@ -50,11 +52,15 @@ cp .env.example .env
 
 ## Usage
 
+**Regular messages:**
 Send any text message to your Telegram bot. The bot will:
 1. Verify you're authorized (by user ID)
 2. Send "Claude myśli..." status
-3. Execute Claude Code with your message as prompt
+3. Execute Claude Code with your message as prompt (continuing previous conversation)
 4. Return cleaned response
+
+**Starting fresh conversation:**
+Send `/new` command to clear conversation history and start a new session.
 
 ## Testing
 
