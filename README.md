@@ -17,6 +17,7 @@ Telegram bot that enables mobile access to Claude Code running on Raspberry Pi (
 - Direct execution on host (no Docker overhead)
 - Full Claude Code features available
 - `/new` command to start fresh conversation
+- **Newsletter digest** - automated weekly email analysis and summaries (optional)
 
 ## Prerequisites
 
@@ -61,6 +62,34 @@ Send any text message to your Telegram bot. The bot will:
 
 **Starting fresh conversation:**
 Send `/new` command to clear conversation history and start a new session.
+
+## Newsletter Digest (Optional)
+
+Automated weekly email digest:
+- Fetches newsletters via IMAP every Sunday at 20:00
+- Converts emails to Markdown format
+- Analyzes content using Claude
+- Sends summary to Telegram
+
+**Setup:**
+1. Add IMAP credentials to `.env`:
+```bash
+IMAP_HOST=imap.gmail.com
+IMAP_PORT=993
+IMAP_USER=your@email.com
+IMAP_PASSWORD=app_password  # Use app-specific password
+NEWSLETTER_SCHEDULE_DAY=6   # 0=Mon, 6=Sun
+NEWSLETTER_SCHEDULE_HOUR=20
+```
+
+2. Customize analysis in `.claude/prompts/newsletter_analysis_prompt.md`
+
+3. Test locally:
+```bash
+python scripts/test_newsletter_digest.py --dry-run
+```
+
+**Storage:** Emails saved to `newsletters/[week]_[year]/`
 
 ## Testing
 
