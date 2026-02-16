@@ -16,3 +16,17 @@ if not ALLOWED_USER_ID:
     raise ValueError("ALLOWED_USER_ID not set in environment")
 
 ALLOWED_USER_ID = int(ALLOWED_USER_ID)
+
+# Newsletter digest configuration
+IMAP_HOST = os.getenv("IMAP_HOST")
+IMAP_PORT = int(os.getenv("IMAP_PORT", "993"))
+IMAP_USER = os.getenv("IMAP_USER")
+IMAP_PASSWORD = os.getenv("IMAP_PASSWORD")
+NEWSLETTER_SCHEDULE_DAY = int(os.getenv("NEWSLETTER_SCHEDULE_DAY", "6"))  # Sunday
+NEWSLETTER_SCHEDULE_HOUR = int(os.getenv("NEWSLETTER_SCHEDULE_HOUR", "20"))
+
+# IMAP config is optional (only needed for newsletter feature)
+if IMAP_HOST and not IMAP_USER:
+    raise ValueError("IMAP_HOST set but IMAP_USER missing")
+if IMAP_HOST and not IMAP_PASSWORD:
+    raise ValueError("IMAP_HOST set but IMAP_PASSWORD missing")
