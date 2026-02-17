@@ -29,6 +29,12 @@ NEWSLETTER_SCHEDULE_MINUTE = int(os.getenv("NEWSLETTER_SCHEDULE_MINUTE", "0"))
 
 NEWSLETTER_SENDERS_FILE = Path(os.getenv("NEWSLETTER_SENDERS_FILE", str(Path(__file__).parent.parent / "senders.json")))
 
+BLOG_SOURCES_FILE = Path(os.getenv("BLOG_SOURCES_FILE", str(Path(__file__).parent.parent / "blog_sources.json")))
+BLOG_SCHEDULE_DAY = int(os.getenv("BLOG_SCHEDULE_DAY", "6"))
+BLOG_SCHEDULE_HOUR = int(os.getenv("BLOG_SCHEDULE_HOUR", "21"))
+BLOG_SCHEDULE_MINUTE = int(os.getenv("BLOG_SCHEDULE_MINUTE", "0"))
+BLOG_ENABLED = BLOG_SOURCES_FILE.exists()
+
 # IMAP config is optional (only needed for newsletter feature)
 NEWSLETTER_ENABLED = bool(IMAP_HOST and IMAP_USER and IMAP_PASSWORD)
 
