@@ -12,7 +12,11 @@ from src.config import (
     ALLOWED_USER_ID,
     NEWSLETTER_ENABLED,
     NEWSLETTER_SCHEDULE_DAY,
-    NEWSLETTER_SCHEDULE_HOUR
+    NEWSLETTER_SCHEDULE_HOUR,
+    BLOG_ENABLED,
+    BLOG_SCHEDULE_DAY,
+    BLOG_SCHEDULE_HOUR,
+    BLOG_SCHEDULE_MINUTE,
 )
 from src.bot import handle_message, handle_new_command
 
@@ -52,6 +56,22 @@ async def main():
     else:
         logger.info("Newsletter scheduler disabled (IMAP not configured)")
 
+    # Start blog scheduler if configured
+    blog_scheduler_task = None
+    if BLOG_ENABLED:
+        from src.blog.scheduler import BlogScheduler
+        blog_scheduler = BlogScheduler(
+            bot=bot,
+            user_id=ALLOWED_USER_ID,
+            schedule_day=BLOG_SCHEDULE_DAY,
+            schedule_hour=BLOG_SCHEDULE_HOUR,
+            schedule_minute=BLOG_SCHEDULE_MINUTE
+        )
+        blog_scheduler_task = asyncio.create_task(blog_scheduler.start())
+        logger.info("Blog scheduler enabled")
+    else:
+        logger.info("Blog scheduler disabled (blog_sources.json not found)")
+
     try:
         await dp.start_polling(bot)
     finally:
@@ -59,6 +79,13 @@ async def main():
             scheduler_task.cancel()
             try:
                 await scheduler_task
+            except asyncio.CancelledError:
+                pass
+
+        if blog_scheduler_task:
+            blog_scheduler_task.cancel()
+            try:
+                await blog_scheduler_task
             except asyncio.CancelledError:
                 pass
 
