@@ -24,7 +24,7 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.newsletter.processor import NewsletterProcessor
-from src.config import IMAP_HOST, IMAP_PORT, IMAP_USER, IMAP_PASSWORD, TELEGRAM_BOT_TOKEN, ALLOWED_USER_ID
+from src.config import IMAP_HOST, IMAP_PORT, IMAP_USER, IMAP_PASSWORD, TELEGRAM_BOT_TOKEN, ALLOWED_USER_ID, NEWSLETTER_SENDERS_FILE
 
 logging.basicConfig(
     level=logging.INFO,
@@ -85,7 +85,8 @@ def main():
             imap_host=IMAP_HOST,
             imap_port=IMAP_PORT,
             imap_user=IMAP_USER,
-            imap_password=IMAP_PASSWORD
+            imap_password=IMAP_PASSWORD,
+            senders_file=NEWSLETTER_SENDERS_FILE
         )
 
         # Run processing
