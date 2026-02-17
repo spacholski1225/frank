@@ -17,8 +17,8 @@ logger = logging.getLogger(__name__)
 class NewsletterProcessor:
     """Orchestrates the newsletter digest pipeline."""
 
-    def __init__(self, imap_host: str, imap_port: int, imap_user: str, imap_password: str):
-        self.fetcher = EmailFetcher(imap_host, imap_port, imap_user, imap_password)
+    def __init__(self, imap_host: str, imap_port: int, imap_user: str, imap_password: str, senders_file: Path = None):
+        self.fetcher = EmailFetcher(imap_host, imap_port, imap_user, imap_password, senders_file=senders_file)
         self.converter = EmailConverter()
         self.runner = ClaudeRunner()
         self.base_dir = Path("newsletters")

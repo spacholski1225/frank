@@ -3,10 +3,12 @@
 
 import imaplib
 import email
+import json
 from email.header import decode_header
 from datetime import datetime, timedelta
 from dataclasses import dataclass
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,11 +28,30 @@ class EmailData:
 class EmailFetcher:
     """Fetches emails from IMAP server."""
 
-    def __init__(self, host: str, port: int, user: str, password: str):
+    def __init__(self, host: str, port: int, user: str, password: str, senders_file: Optional[Path] = None):
         self.host = host
         self.port = port
         self.user = user
         self.password = password
+        self._allowed_senders = self._load_senders(senders_file) if senders_file else []
+
+    def _load_senders(self, path: Path) -> List[str]:
+        """Load allowed senders from JSON whitelist file."""
+        if not path.exists():
+            logger.warning(f"Senders whitelist not found: {path}")
+            return []
+        with open(path) as f:
+            data = json.load(f)
+        senders = [s.lower() for s in data.get("senders", [])]
+        logger.info(f"Loaded {len(senders)} whitelisted senders")
+        return senders
+
+    def _is_allowed(self, sender: str) -> bool:
+        """Check if sender matches any entry in the whitelist."""
+        if not self._allowed_senders:
+            return True
+        sender_lower = sender.lower()
+        return any(entry in sender_lower for entry in self._allowed_senders)
 
     def fetch_last_week(self) -> List[EmailData]:
         """Fetch all emails from the last 7 days."""
@@ -76,6 +97,10 @@ class EmailFetcher:
                     date = email.utils.parsedate_to_datetime(date_str)
                 except:
                     date = datetime.now()
+
+                if not self._is_allowed(sender):
+                    logger.debug(f"Skipping non-whitelisted sender: {sender}")
+                    continue
 
                 # Extract body
                 body_text, body_html = self._extract_body(msg)

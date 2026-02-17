@@ -96,13 +96,14 @@ class NewsletterScheduler:
                 processor = self.processor_factory()
             else:
                 from src.newsletter.processor import NewsletterProcessor
-                from src.config import IMAP_HOST, IMAP_PORT, IMAP_USER, IMAP_PASSWORD
+                from src.config import IMAP_HOST, IMAP_PORT, IMAP_USER, IMAP_PASSWORD, NEWSLETTER_SENDERS_FILE
 
                 processor = NewsletterProcessor(
                     imap_host=IMAP_HOST,
                     imap_port=IMAP_PORT,
                     imap_user=IMAP_USER,
-                    imap_password=IMAP_PASSWORD
+                    imap_password=IMAP_PASSWORD,
+                    senders_file=NEWSLETTER_SENDERS_FILE
                 )
 
             # Run processing (blocking, but runs in executor implicitly)

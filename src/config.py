@@ -2,6 +2,7 @@
 # ABOUTME: Loads environment variables from .env file using python-dotenv
 
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,6 +25,8 @@ IMAP_USER = os.getenv("IMAP_USER")
 IMAP_PASSWORD = os.getenv("IMAP_PASSWORD")
 NEWSLETTER_SCHEDULE_DAY = int(os.getenv("NEWSLETTER_SCHEDULE_DAY", "6"))
 NEWSLETTER_SCHEDULE_HOUR = int(os.getenv("NEWSLETTER_SCHEDULE_HOUR", "20"))
+
+NEWSLETTER_SENDERS_FILE = Path(os.getenv("NEWSLETTER_SENDERS_FILE", str(Path(__file__).parent.parent / "senders.json")))
 
 # IMAP config is optional (only needed for newsletter feature)
 NEWSLETTER_ENABLED = bool(IMAP_HOST and IMAP_USER and IMAP_PASSWORD)
