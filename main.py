@@ -38,11 +38,13 @@ async def main():
     if NEWSLETTER_ENABLED:
         from src.newsletter.scheduler import NewsletterScheduler
 
+        from src.config import NEWSLETTER_SCHEDULE_MINUTE
         scheduler = NewsletterScheduler(
             bot=bot,
             user_id=ALLOWED_USER_ID,
             schedule_day=NEWSLETTER_SCHEDULE_DAY,
-            schedule_hour=NEWSLETTER_SCHEDULE_HOUR
+            schedule_hour=NEWSLETTER_SCHEDULE_HOUR,
+            schedule_minute=NEWSLETTER_SCHEDULE_MINUTE
         )
 
         scheduler_task = asyncio.create_task(scheduler.start())

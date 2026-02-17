@@ -18,12 +18,14 @@ class NewsletterScheduler:
         user_id: int,
         schedule_day: int = 6,  # 0=Monday, 6=Sunday
         schedule_hour: int = 20,
+        schedule_minute: int = 0,
         processor_factory=None
     ):
         self.bot = bot
         self.user_id = user_id
         self.schedule_day = schedule_day
         self.schedule_hour = schedule_hour
+        self.schedule_minute = schedule_minute
         self.processor_factory = processor_factory
         self._task: Optional[asyncio.Task] = None
 
@@ -44,7 +46,7 @@ class NewsletterScheduler:
         days_ahead = self.schedule_day - current_weekday
 
         # If target day is today but time has passed, schedule for next week
-        if days_ahead == 0 and now.hour >= self.schedule_hour:
+        if days_ahead == 0 and (now.hour, now.minute) >= (self.schedule_hour, self.schedule_minute):
             days_ahead = 7
         # If target day already passed this week, schedule for next week
         elif days_ahead < 0:
@@ -53,7 +55,7 @@ class NewsletterScheduler:
         next_run = now + timedelta(days=days_ahead)
         next_run = next_run.replace(
             hour=self.schedule_hour,
-            minute=0,
+            minute=self.schedule_minute,
             second=0,
             microsecond=0
         )
