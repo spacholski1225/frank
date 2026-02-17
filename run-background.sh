@@ -4,6 +4,9 @@
 echo "Activating virtual environment..."
 source ./venv/bin/activate
 
+echo "Installing dependencies..."
+pip install -q -r requirements.txt
+
 echo "Checking .env file..."
 if [ ! -f ./.env ]; then
     echo "ERROR: .env file not found!"
@@ -11,7 +14,6 @@ if [ ! -f ./.env ]; then
 fi
 
 echo "Starting bot in background..."
-cd ./frank
 
 # Check if bot is already running
 if [ -f bot.pid ]; then
