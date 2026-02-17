@@ -9,3 +9,4 @@ __pycache__/
 test-local.py
 bot.pid
 nohup.outnewsletters/
+docs/plans/*
