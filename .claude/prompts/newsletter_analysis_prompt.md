@@ -49,3 +49,9 @@ Podczas analizy plików szczególnie szukaj i grupuj informacje o:
 * [Konferencje, CFP, Webinary, Premiery narzędzi]
 
 ---
+
+### Zasada gęstości informacji:
+- Pisz tak, jakby każde słowo kosztowało 10$. Usuń przymiotniki i zbędne wypełniacze (np. zamiast „To niezwykle interesujące narzędzie, które może pomóc w...” napisz „Narzędzie X automatyzuje Y”).
+- Stosuj zasadę 80/20: Wyciągnij 20% treści, która generuje 80% wartości dla mojej pracy.
+- Jeśli informacja jest powszechnie znana (np. „AI się rozwija”) – pomiń ją. Interesują mnie tylko nowości, zmiany i konkretne parametry techniczne.
+- Maksymalnie 3-4 punkty na jeden wpis/mail. Jeśli nie ma tyle konkretów – napisz jeden, ale mocny.
