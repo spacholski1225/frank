@@ -23,7 +23,7 @@ async def handle_message(message: types.Message):
         return
 
     # Send thinking status
-    await message.answer("Claude myśli...")
+    await message.answer("Frank myśli...")
 
     try:
         user_id = message.from_user.id

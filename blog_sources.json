@@ -3,38 +3,6 @@
     {
       "url": "https://www.deeplearning.ai/the-batch/",
       "name": "DeepLearning.AI - The Batch"
-    },
-    {
-      "url": "https://www.deeplearning.ai/the-batch/tag/letters/",
-      "name": "DeepLearning.AI - Letters"
-    },
-    {
-      "url": "https://www.deeplearning.ai/blog/",
-      "name": "DeepLearning.AI Blog"
-    },
-    {
-      "url": "https://sztucznainteligencjablog.pl/",
-      "name": "Sztuczna Inteligencja Blog"
-    },
-    {
-      "url": "https://www.kdnuggets.com/",
-      "name": "KDnuggets"
-    },
-    {
-      "url": "https://www.anthropic.com/engineering",
-      "name": "Anthropic Engineering"
-    },
-    {
-      "url": "https://www.anthropic.com/news",
-      "name": "Anthropic News"
-    },
-    {
-      "url": "https://huggingface.co/blog",
-      "name": "Hugging Face Blog"
-    },
-    {
-      "url": "https://openai.com/pl-PL/news/",
-      "name": "OpenAI News"
     }
   ]
 }
