@@ -3,6 +3,7 @@
 
 import json
 import logging
+import tempfile
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any
@@ -49,17 +50,23 @@ class BlogProcessor:
             output_dir.mkdir(parents=True, exist_ok=True)
 
             saved = []
+            errors = []
+            run_dir = Path(tempfile.mkdtemp(prefix="run-", dir=output_dir))
             for source in sources:
                 try:
                     path = self.runner.fetch_blog(
                         url=source["url"],
                         name=source["name"],
-                        output_dir=output_dir
+                        output_dir=run_dir
                     )
                     if path:
                         saved.append(path)
                 except Exception as e:
                     logger.error(f"Failed to fetch {source['url']}: {e}")
+                    errors.append(source["url"])
+
+            if not saved and errors:
+                raise RuntimeError("Blog fetching failed: " + ", ".join(errors))
 
             if not saved:
                 return {
@@ -69,7 +76,11 @@ class BlogProcessor:
                     "summary": "No new blog posts this week."
                 }
 
-            summary = self.summarizer.summarize(output_dir)
+            summary = self.summarizer.summarize(run_dir)
+            if errors:
+                summary += "\n\n⚠️ Nie udało się odczytać źródeł: " + ", ".join(errors)
+            (run_dir / "summary.md").write_text(summary, encoding="utf-8")
+            (output_dir / "summary.md").write_text(summary, encoding="utf-8")
 
             return {
                 "success": True,

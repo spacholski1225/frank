@@ -1,58 +1,26 @@
-# ABOUTME: Tests for blog per-URL Claude runner
-# ABOUTME: Verifies subprocess calls, output parsing, file saving
-
+from datetime import date
+from unittest.mock import patch
 import pytest
-from pathlib import Path
-from unittest.mock import patch, MagicMock
 from src.blog.runner import BlogRunner
 
 
-def test_run_blog_returns_no_new_content_when_claude_says_so(tmp_path):
-    runner = BlogRunner()
-    with patch("subprocess.run") as mock_run:
-        mock_run.return_value = MagicMock(
-            returncode=0,
-            stdout="NO_NEW_CONTENT",
-            stderr=""
-        )
-        result = runner.fetch_blog(
-            url="https://example.com/blog",
-            name="Example Blog",
-            output_dir=tmp_path
-        )
-    assert result is None
-    assert list(tmp_path.iterdir()) == []
+@pytest.mark.parametrize("answer", ["NO_NEW_CONTENT", "FETCH_ERROR", "# Polski raport"])
+def test_blog_fetch_results(tmp_path, answer):
+    with patch("src.blog.runner.execute_codex", return_value=(answer, "123")) as run:
+        if answer == "FETCH_ERROR":
+            with pytest.raises(RuntimeError, match="Cannot fetch"):
+                BlogRunner().fetch_blog("https://example.com", "Example", tmp_path)
+        else:
+            result = BlogRunner().fetch_blog("https://example.com", "Example", tmp_path)
+            if answer == "NO_NEW_CONTENT":
+                assert result is None
+                assert not list(tmp_path.iterdir())
+            else:
+                assert result.read_text() == answer
+    assert run.call_args.kwargs["web_search"] is True
+    assert date.today().isoformat() in run.call_args.args[0]
 
 
-def test_run_blog_saves_file_when_content_found(tmp_path):
-    runner = BlogRunner()
-    with patch("subprocess.run") as mock_run:
-        mock_run.return_value = MagicMock(
-            returncode=0,
-            stdout="---\nsource: Example Blog\nurl: https://example.com/blog\n---\n\nSome content",
-            stderr=""
-        )
-        result = runner.fetch_blog(
-            url="https://example.com/blog",
-            name="Example Blog",
-            output_dir=tmp_path
-        )
-    assert result is not None
-    assert result.exists()
-    assert "example.com" in result.name
-
-
-def test_run_blog_raises_on_claude_failure(tmp_path):
-    runner = BlogRunner()
-    with patch("subprocess.run") as mock_run:
-        mock_run.return_value = MagicMock(
-            returncode=1,
-            stdout="",
-            stderr="some error"
-        )
-        with pytest.raises(Exception, match="Claude execution failed"):
-            runner.fetch_blog(
-                url="https://example.com/blog",
-                name="Example Blog",
-                output_dir=tmp_path
-            )
+def test_marker_inside_article_is_not_no_content(tmp_path):
+    with patch("src.blog.runner.execute_codex", return_value=("Article about NO_NEW_CONTENT markers", "123")):
+        assert BlogRunner().fetch_blog("https://example.com", "Example", tmp_path)

@@ -1,5 +1,5 @@
 # ABOUTME: Orchestrates newsletter processing pipeline
-# ABOUTME: Coordinates email fetching, conversion, storage, and Claude analysis
+# ABOUTME: Coordinates email fetching, conversion, storage, and Codex analysis
 
 import logging
 import json
@@ -9,7 +9,7 @@ from typing import Dict, Any
 
 from src.newsletter.email_fetcher import EmailFetcher
 from src.newsletter.email_converter import EmailConverter
-from src.newsletter.claude_runner import ClaudeRunner
+from src.newsletter.codex_runner import CodexRunner
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class NewsletterProcessor:
     def __init__(self, imap_host: str, imap_port: int, imap_user: str, imap_password: str, senders_file: Path = None):
         self.fetcher = EmailFetcher(imap_host, imap_port, imap_user, imap_password, senders_file=senders_file)
         self.converter = EmailConverter()
-        self.runner = ClaudeRunner()
+        self.runner = CodexRunner()
         self.base_dir = Path("newsletters")
 
     def process(self) -> Dict[str, Any]:
@@ -82,18 +82,11 @@ class NewsletterProcessor:
             metadata_path = output_dir / "_metadata.json"
             metadata_path.write_text(json.dumps(metadata, indent=2), encoding='utf-8')
 
-            # Step 5: Run Claude analysis
-            logger.info("Running Claude analysis...")
+            # Step 5: Run Codex analysis
+            logger.info("Running Codex analysis...")
             analysis_output = self.runner.analyze_newsletters(str(output_dir))
 
-            # Step 6: Read generated summary
-            summary_path = output_dir / "summary.md"
-
-            if summary_path.exists():
-                summary = summary_path.read_text(encoding='utf-8')
-            else:
-                logger.warning("summary.md not found, using Claude stdout")
-                summary = analysis_output
+            summary = analysis_output
 
             logger.info("Newsletter processing completed successfully")
 

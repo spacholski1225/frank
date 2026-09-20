@@ -38,13 +38,13 @@ async def test_handle_message_unauthorized():
 @pytest.mark.asyncio
 @patch('src.bot.get_session')
 @patch('src.bot.save_session')
-@patch('src.bot.execute_claude')
+@patch('src.bot.execute_codex')
 @patch('src.bot.remove_ansi_codes')
 @patch('src.bot.split_long_message')
 async def test_handle_message_success_no_session(mock_split, mock_remove_ansi, mock_execute, mock_save, mock_get):
     with patch('src.bot.ALLOWED_USER_ID', 12345):
         mock_get.return_value = None
-        mock_execute.return_value = ("Claude output", "new-session-123")
+        mock_execute.return_value = ("Codex output", "new-session-123")
         mock_remove_ansi.return_value = "Clean output"
         mock_split.return_value = ["Clean output"]
 
@@ -62,7 +62,7 @@ async def test_handle_message_success_no_session(mock_split, mock_remove_ansi, m
         # Verify thinking message sent
         assert message.answer.call_count == 2
         first_call = message.answer.call_args_list[0]
-        assert "Claude myśli" in first_call[0][0]
+        assert "Frank myśli" in first_call[0][0]
 
         # Verify result sent
         second_call = message.answer.call_args_list[1]
@@ -72,7 +72,7 @@ async def test_handle_message_success_no_session(mock_split, mock_remove_ansi, m
 @pytest.mark.asyncio
 @patch('src.bot.get_session')
 @patch('src.bot.save_session')
-@patch('src.bot.execute_claude')
+@patch('src.bot.execute_codex')
 @patch('src.bot.remove_ansi_codes')
 @patch('src.bot.split_long_message')
 async def test_handle_message_success_with_session(mock_split, mock_remove_ansi, mock_execute, mock_save, mock_get):

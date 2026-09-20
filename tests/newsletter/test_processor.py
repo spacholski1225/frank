@@ -10,9 +10,9 @@ from src.newsletter.email_fetcher import EmailData
 
 
 class TestNewsletterProcessor:
-    @patch('src.newsletter.processor.ClaudeRunner')
+    @patch('src.newsletter.processor.CodexRunner')
     @patch('src.newsletter.processor.EmailFetcher')
-    def test_process_newsletters_full_flow(self, mock_fetcher_class, mock_runner_class):
+    def test_process_newsletters_full_flow(self, mock_fetcher_class, mock_runner_class, tmp_path):
         """Test complete newsletter processing pipeline."""
         # Mock email fetching
         mock_fetcher = MagicMock()
@@ -42,6 +42,7 @@ class TestNewsletterProcessor:
             imap_password="pass"
         )
 
+        processor.base_dir = tmp_path
         result = processor.process()
 
         assert result["success"] is True

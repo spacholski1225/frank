@@ -149,11 +149,8 @@ def main():
 
     print(f"\n✅ Generated {count} test emails")
     print(f"📁 Location: {output_dir}")
-    print(f"\nNext steps:")
-    print(f"  1. Test Claude analysis:")
-    print(f"     python scripts/test_newsletter_digest.py --skip-fetch --dry-run")
-    print(f"  2. Or manually run Claude:")
-    print(f"     claude -p \"$(cat .claude/prompts/newsletter_analysis_prompt.md)\" --allowedTools Read,Glob,Write")
+    print("\nAnalyze these samples with Codex (no IMAP or Telegram):")
+    print(f"  python scripts/summarize_saved.py newsletter {output_dir}")
 
 
 if __name__ == "__main__":

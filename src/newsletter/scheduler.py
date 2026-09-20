@@ -108,8 +108,8 @@ class NewsletterScheduler:
                     senders_file=NEWSLETTER_SENDERS_FILE
                 )
 
-            # Run processing (blocking, but runs in executor implicitly)
-            result = processor.process()
+            # Run blocking IMAP and CLI work off the event loop
+            result = await asyncio.to_thread(processor.process)
 
             # Send result to Telegram
             if result["success"]:

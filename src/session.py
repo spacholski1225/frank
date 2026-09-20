@@ -1,11 +1,11 @@
-# ABOUTME: Session storage for Claude conversation continuity per Telegram user
+# ABOUTME: Session storage for Codex conversation continuity per Telegram user
 # ABOUTME: Manages session IDs in memory for conversation history tracking
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Global dictionary: {telegram_user_id: claude_session_id}
+# Global dictionary: {telegram_user_id: codex_session_id}
 _sessions: dict[int, str] = {}
 
 
@@ -33,7 +33,7 @@ def save_session(user_id: int, session_id: str) -> None:
 
     Args:
         user_id: Telegram user ID
-        session_id: Claude session ID to save
+        session_id: Codex session ID to save
     """
     _sessions[user_id] = session_id
     logger.info(f"Saved session for user {user_id}: {session_id[:8]}...")

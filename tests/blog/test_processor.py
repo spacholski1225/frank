@@ -59,3 +59,34 @@ def test_process_handles_missing_sources_file(tmp_path):
     result = processor.process()
     assert result["success"] is False
     assert "error" in result
+
+
+def test_all_fetch_failures_are_errors(tmp_path, sources_file):
+    processor = BlogProcessor(sources_file, tmp_path)
+    with patch.object(processor.runner, "fetch_blog", side_effect=RuntimeError("offline")):
+        result = processor.process()
+    assert result["success"] is False
+    assert "Blog fetching failed" in result["error"]
+
+
+def test_repeat_run_excludes_old_blog_files(tmp_path, sources_file):
+    processor = BlogProcessor(sources_file, tmp_path)
+    runs = []
+    def fetch(url, name, output_dir):
+        runs.append(output_dir)
+        target = output_dir / "source.md"
+        target.write_text("fresh content")
+        return target
+    with patch.object(processor.runner, "fetch_blog", side_effect=fetch), patch.object(processor.summarizer, "summarize", return_value="Fresh report"):
+        processor.process()
+        processor.process()
+    assert runs[0] == runs[1]
+    assert runs[0] != runs[2]
+
+
+def test_partial_failure_is_visible_in_report(tmp_path, sources_file):
+    processor = BlogProcessor(sources_file, tmp_path)
+    with patch.object(processor.runner, "fetch_blog", side_effect=[tmp_path / "one.md", RuntimeError("offline")]), patch.object(processor.summarizer, "summarize", return_value="Report"):
+        result = processor.process()
+    assert result["success"] is True
+    assert "another.dev" in result["summary"]

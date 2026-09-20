@@ -80,7 +80,7 @@ class BlogScheduler:
 
         try:
             processor = self._create_processor()
-            result = processor.process()
+            result = await asyncio.to_thread(processor.process)
 
             if result["success"]:
                 summary = result["summary"]

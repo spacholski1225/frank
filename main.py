@@ -1,4 +1,4 @@
-# ABOUTME: Main entry point for Claude-RPI Telegram bridge bot
+# ABOUTME: Main entry point for Frank Codex Telegram bridge bot
 # ABOUTME: Initializes aiogram bot, registers handlers, starts scheduler, begins polling
 
 import asyncio
@@ -35,7 +35,7 @@ async def main():
     # Register message handler for all text messages
     dp.message.register(handle_message, F.text)
 
-    logger.info("Starting Claude-RPI Bridge bot...")
+    logger.info("Starting Frank Codex Bridge bot...")
 
     # Start newsletter scheduler if configured
     scheduler_task = None
